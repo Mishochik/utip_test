@@ -13,7 +13,7 @@ canvas.addEventListener('mousedown', () => isMouseDown = true);
 canvas.addEventListener('mouseup', () => {
     isMouseDown = false;
     context.beginPath();
-    // coordinates.push('mouseup');
+    coordinates.push('mouseup');
 });
 
 context.lineWidth = config.size;
@@ -78,15 +78,15 @@ function replay(name) {
     }
     clearCanvas();
     coords.forEach(element => {
-        if (typeof element === 'object') {
-            context.lineTo(element.clientX, element.clientY);
-            context.stroke();
-            context.beginPath();
-            context.arc(element.clientX, element.clientY, config.size / 2, 0, Math.PI * 2);
-            context.fill();
-            context.beginPath();
-            context.lineTo(element.clientX, element.clientY);
-        }
+        if (element === 'mouseup') context.beginPath();
+
+        context.lineTo(element.clientX, element.clientY);
+        context.stroke();
+        context.beginPath();
+        context.arc(element.clientX, element.clientY, config.size / 2, 0, Math.PI * 2);
+        context.fill();
+        context.beginPath();
+        context.lineTo(element.clientX, element.clientY);
     });
 }
 
