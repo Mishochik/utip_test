@@ -3,12 +3,16 @@ const context = canvas.getContext('2d');
 const config = {
     brush: {},
     size: 10,
-    color: {},
+    color: '#000000',
 };
 let isMouseDown = false;
 const coordinates = [];
+const colorList = ['#000000', '#ff0000', '#00ff00', '#0000ff', '#cccccc'];
 
 renderList();
+renderPalette();
+defaultColor();
+
 canvas.addEventListener('mousedown', () => isMouseDown = true);
 canvas.addEventListener('mouseup', () => {
     isMouseDown = false;
@@ -22,7 +26,8 @@ canvas.addEventListener('mousemove', event => {
     if (isMouseDown) {
         coordinates.push({
             clientX: event.clientX,
-            clientY: event.clientY
+            clientY: event.clientY,
+            color: config.color
         });
         context.lineTo(event.clientX, event.clientY);
         context.stroke();
@@ -38,11 +43,13 @@ function clearCanvas() {
     context.fillStyle = 'white';
     context.fillRect(0, 0, canvas.width, canvas.height);
     context.beginPath();
-    context.fillStyle = '#000';
+    context.fillStyle = config.color;
 }
 
 function save() {
-    const name = document.getElementById('drawingName').value;
+    const input = document.getElementById('drawingName');
+    const name = input.value;
+    input.value = '';
     if (!coordinates.length) {
         return console.log('Холст чист');
     }
@@ -76,10 +83,12 @@ function replay(name) {
         console.log('Нет сохранений');
         return;
     }
+
     clearCanvas();
     coords.forEach(element => {
         if (element === 'mouseup') context.beginPath();
 
+        colorChange(element.color);
         context.lineTo(element.clientX, element.clientY);
         context.stroke();
         context.beginPath();
@@ -117,6 +126,36 @@ function renderList() {
     const length = localStorage.length;
     const list = document.getElementById('list');
     for (let i = 0; i < length; i++) {
-        list.append(createHtmlListItem(localStorage.key(i)));
+        const picture = localStorage.key(i);
+        if (picture === 'defaultColor') continue;
+        list.append(createHtmlListItem(picture));
     }
+}
+
+function renderPalette() {
+    const palette = document.getElementById('palette');
+    colorList.forEach(item => {
+        const div = createHtmlPaletteColor(item);
+        palette.appendChild(div);
+    });
+}
+
+function createHtmlPaletteColor(color) {
+    const div = document.createElement('div');
+    div.setAttribute('onclick', `colorChange('${color}')`);
+    div.classList.add('color');
+    div.style.backgroundColor = color;
+    return div;
+}
+
+function colorChange(color) {
+    config.color = color;
+    context.fillStyle = config.color;
+    context.strokeStyle = config.color;
+    localStorage.setItem('defaultColor', config.color);
+}
+
+function defaultColor() {
+    const color = localStorage.getItem('defaultColor');
+    color ? colorChange(color) : colorChange(colorList[1]);
 }

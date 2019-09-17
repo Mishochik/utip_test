@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>utip_test</title>
+    <style>
+        .color {
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 <canvas id="canvas"></canvas>
@@ -10,6 +17,7 @@
     <input type="text" id="drawingName">
     <button onclick="save()">save</button>
 </div>
+<div id="palette"></div>
 <ul id="list"></ul>
 <button onclick="completeCleaningCanvas()">clear</button>
 
