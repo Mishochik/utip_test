@@ -1,7 +1,6 @@
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
 const config = {
-    brush: {},
     size: 10,
     color: '#000000',
 };
@@ -12,6 +11,7 @@ const colorList = ['#000000', '#ff0000', '#00ff00', '#0000ff', '#cccccc'];
 renderList();
 renderPalette();
 defaultColor();
+renderBrushes();
 
 canvas.addEventListener('mousedown', () => isMouseDown = true);
 canvas.addEventListener('mouseup', () => {
@@ -27,7 +27,8 @@ canvas.addEventListener('mousemove', event => {
         coordinates.push({
             clientX: event.clientX,
             clientY: event.clientY,
-            color: config.color
+            color: config.color,
+            brush: config.size,
         });
         context.lineTo(event.clientX, event.clientY);
         context.stroke();
@@ -88,6 +89,7 @@ function replay(name) {
     coords.forEach(element => {
         if (element === 'mouseup') context.beginPath();
 
+        brushChange(element.brush)
         colorChange(element.color);
         context.lineTo(element.clientX, element.clientY);
         context.stroke();
@@ -158,4 +160,25 @@ function colorChange(color) {
 function defaultColor() {
     const color = localStorage.getItem('defaultColor');
     color ? colorChange(color) : colorChange(colorList[1]);
+}
+
+function renderBrushes() {
+    const brushSet = document.getElementById('brushSet');
+    brushSet.appendChild(createHtmlBrush('10'));
+    brushSet.appendChild(createHtmlBrush('20'));
+    brushSet.appendChild(createHtmlBrush('30'));
+}
+
+function createHtmlBrush(brush) {
+    const div = document.createElement('div');
+    div.setAttribute('onclick', `brushChange('${brush}')`);
+    div.classList.add('brush');
+    div.style.border = 'solid';
+    div.innerText = brush;
+    return div;
+}
+
+function brushChange(brush) {
+    config.size = brush;
+    context.lineWidth = config.size;
 }
