@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "noImplicitAny": true,
+    // For development, you can use "es6"
+    "target": "es5"
+  }
+}
